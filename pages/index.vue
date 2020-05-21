@@ -9,12 +9,14 @@
         :time-step="config.minutePerSlot"
         :events="events"
         :start-week-on="startDay"
+        locale="hr"
       />
     </client-only>
   </div>
 </template>
 <script>
 import VueCal from 'vue-cal'
+import 'vue-cal/dist/i18n/hr.js'
 import 'vue-cal/dist/vuecal.css'
 export default {
   components: {

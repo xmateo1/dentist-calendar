@@ -23,9 +23,9 @@ export default {
       }
     }
   },
-  closedTitle: 'closed',
-  breakTitle: 'break',
-  bookedTitle: 'booked',
+  closedTitle: 'zatvoreno',
+  breakTitle: 'pauza',
+  bookedTitle: 'zauzeto',
   generatedDays: 7,
   generatedBookedSlots: 15
 }
