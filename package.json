@@ -13,6 +13,7 @@
     "lintfix": "eslint --fix --ext .js,.vue --ignore-path .gitignore ."
   },
   "dependencies": {
+    "@nuxtjs/moment": "^1.6.1",
     "nuxt": "^2.0.0"
   },
   "devDependencies": {
