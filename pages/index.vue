@@ -2,6 +2,7 @@
   <div class="container">
     <client-only>
       <vue-cal
+        ref="vuecal"
         :disable-views="['years', 'year', 'month', 'day']"
         :hide-title-bar="true"
         :time-from="config.firstHour * 60"
@@ -10,14 +11,17 @@
         :events="events"
         :start-week-on="startDay"
         locale="hr"
+        @cell-click="log"
       />
     </client-only>
   </div>
 </template>
 <script>
 import VueCal from 'vue-cal'
+import moment from 'moment'
 import 'vue-cal/dist/i18n/hr.js'
 import 'vue-cal/dist/vuecal.css'
+
 export default {
   components: {
     VueCal
@@ -31,6 +35,21 @@ export default {
     },
     startDay() {
       return this.$store.state.startDay
+    }
+  },
+  methods: {
+    log(selectedDate) {
+      const minuteDifference =
+        moment(selectedDate).minute() % this.config.minutePerSlot
+      const closestSlot = moment(selectedDate)
+        .add(-minuteDifference, 'minutes')
+        .toDate()
+      // search for existing events at the same time
+      if (this.$store.getters.getEventsByDate(closestSlot).length === 0)
+        this.$refs.vuecal.createEvent(closestSlot, this.config.minutePerSlot, {
+          title: 'moj termin',
+          class: 'user'
+        })
     }
   }
 }
@@ -66,6 +85,10 @@ export default {
 }
 .closed.vuecal__event {
   padding-top: 0.7em;
+}
+.user.vuecal__event {
+  background: rgb(81, 18, 255);
+  color: white;
 }
 .vuecal__event {
   font-size: 0.9em;

@@ -16,3 +16,12 @@ export const state = () => {
   }
   return s
 }
+
+export const getters = {
+  getEventsByDate: (state) => (start) => {
+    return state.events.filter(
+      // events with same or earlier start and ending after start
+      (event) => +event.start <= +start && +event.end > +start
+    )
+  }
+}
