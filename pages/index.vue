@@ -50,15 +50,29 @@ export default {
   display: none;
 }
 .closed {
-  background: rgba(140, 140, 120, 0.15);
+  background: rgba(189, 189, 187, 0.27);
 }
 .break {
-  background: rgba(240, 180, 50, 0.3);
+  background: rgb(255, 239, 0);
+}
+.booked {
+  background: rgb(255, 18, 118);
+  color: white;
+}
+.booked.vuecal__event {
+  padding-top: 0.7em;
+}
+.closed.vuecal__event {
+  padding-top: 0.7em;
+}
+.vuecal__event {
+  font-size: 0.9em;
 }
 .vuecal__cell--selected {
   background: none;
 }
-.closed .vuecal__event-time {
+.closed .vuecal__event-time,
+.booked .vuecal__event-time {
   display: none;
 }
 </style>

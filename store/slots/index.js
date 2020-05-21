@@ -1,8 +1,10 @@
-import closed from './closed'
+import booked from './booked'
 import breaks from './breaks'
+import closed from './closed'
 
 export default {
   namespaced: true,
-  closed,
-  breaks
+  booked,
+  breaks,
+  closed
 }

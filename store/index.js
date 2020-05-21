@@ -4,7 +4,11 @@ import slots from './slots'
 
 export const state = () => {
   const s = {
-    events: [].concat(slots.closed.events, slots.breaks.events),
+    events: [].concat(
+      slots.booked.events,
+      slots.breaks.events,
+      slots.closed.events
+    ),
     config,
     startDay: moment()
       .add(1, 'days')

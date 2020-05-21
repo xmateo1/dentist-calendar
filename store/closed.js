@@ -1,11 +1,20 @@
 import moment from 'moment'
-import config from '../app.config'
-import days from '../days'
+import config from './app.config'
 
-const events = []
-const className = 'closed'
+// js standard for days
+const days = {
+  0: 'sun',
+  1: 'mon',
+  2: 'tue',
+  3: 'wed',
+  4: 'thu',
+  5: 'fri',
+  6: 'sat'
+}
 
-for (let i = 1; i < config.generatedDays + 1; i++) {
+const slots = []
+
+for (let i = 1; i < 8; i++) {
   const dayOfWeek = moment()
     .add(i, 'days')
     .day()
@@ -17,41 +26,51 @@ for (let i = 1; i < config.generatedDays + 1; i++) {
 
   // business day
   if (s.days.includes(day)) {
-    events.push({
+    slots.push({
       start: moment('00:00', 'HH:mm')
         .add(i, 'days')
         .toDate(),
-      end: moment(s.start, config.timeFormat)
+      end: moment(s.start, 'HH:mm')
         .add(i, 'days')
         .toDate(),
-      title: config.closedTitle,
-      class: className
+      title: 'closed',
+      class: 'closed'
     })
-    events.push({
-      start: moment(s.end, config.timeFormat)
+    slots.push({
+      start: moment(s.end, 'HH:mm')
         .add(i, 'days')
         .toDate(),
       end: moment('23:59', 'HH:mm')
         .add(i, 'days')
         .toDate(),
-      title: config.closedTitle,
-      class: className
+      title: 'closed',
+      class: 'closed'
+    })
+    slots.push({
+      start: moment(s.break.start, 'HH:mm')
+        .add(i, 'days')
+        .toDate(),
+      end: moment(s.break.end, 'HH:mm')
+        .add(i, 'days')
+        .toDate(),
+      title: 'break',
+      class: 'break'
     })
     // non-business day
   } else {
-    events.push({
+    slots.push({
       start: moment('00:00', 'HH:mm')
         .add(i, 'days')
         .toDate(),
       end: moment('23:59', 'HH:mm')
         .add(i, 'days')
         .toDate(),
-      title: config.closedTitle,
-      class: className
+      title: 'closed',
+      class: 'closed'
     })
   }
 }
 
 export default {
-  events
+  slots
 }

@@ -2,6 +2,7 @@ export default {
   firstHour: 8,
   lastHour: 19,
   minutePerSlot: 30,
+  timeFormat: 'HH:mm',
   shift: {
     even: {
       days: ['mon', 'tue', 'wed', 'thu', 'fri', 'sat'],
@@ -24,5 +25,7 @@ export default {
   },
   closedTitle: 'closed',
   breakTitle: 'break',
-  bookedTitle: 'booked'
+  bookedTitle: 'booked',
+  generatedDays: 7,
+  generatedBookedSlots: 15
 }
