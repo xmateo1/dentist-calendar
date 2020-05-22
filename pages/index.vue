@@ -11,7 +11,7 @@
         :events="events"
         :start-week-on="startDay"
         locale="hr"
-        @cell-click="log"
+        @cell-click="cellAction"
       />
     </client-only>
   </div>
@@ -38,18 +38,33 @@ export default {
     }
   },
   methods: {
-    log(selectedDate) {
+    async cellAction(selectedDate) {
+      const userClass = 'user'
       const minuteDifference =
-        moment(selectedDate).minute() % this.config.minutePerSlot
+        selectedDate.getMinutes() % this.config.minutePerSlot
       const closestSlot = moment(selectedDate)
         .add(-minuteDifference, 'minutes')
         .toDate()
       // search for existing events at the same time
-      if (this.$store.getters.getEventsByDate(closestSlot).length === 0)
-        this.$refs.vuecal.createEvent(closestSlot, this.config.minutePerSlot, {
+      const concurringEvents = this.$store.getters.getEventsByDate(closestSlot)
+      if (concurringEvents.length === 0) {
+        /* this.$refs.vuecal.createEvent(closestSlot, this.config.minutePerSlot, {
           title: 'moj termin',
           class: 'user'
-        })
+        }) */
+        const event = {
+          start: closestSlot,
+          end: moment(closestSlot)
+            .add(this.config.minutePerSlot, 'minutes')
+            .toDate(),
+          title: this.config.userSlotTitle,
+          class: userClass
+        }
+        await this.$store.dispatch('ADD_EVENT', { event })
+      } else if (concurringEvents[0].class === userClass) {
+        const event = concurringEvents[0]
+        await this.$store.dispatch('REMOVE_EVENT', { event })
+      }
     }
   }
 }
