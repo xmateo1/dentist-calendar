@@ -31,5 +31,5 @@ export default {
   generatedBookedSlots: 15,
   maxUserSlotsPerDay: 1,
   maxUserSlotsPerWeek: 2,
-  startDayOffset: 5
+  startDayOffset: 1
 }

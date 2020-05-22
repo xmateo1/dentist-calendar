@@ -47,6 +47,8 @@ export default {
   },
   methods: {
     async cellAction(selectedDate) {
+      const isDate = selectedDate instanceof Date
+      if (!isDate) return false
       const minuteDifference =
         selectedDate.getMinutes() % this.config.minutePerSlot
       const closestSlot = moment(selectedDate)
@@ -95,11 +97,19 @@ export default {
 .vuecal__menu {
   display: none;
 }
+.vuecal__cell--selected {
+  background: none;
+}
+.closed .vuecal__event-time,
+.booked .vuecal__event-time {
+  display: none;
+}
 .closed {
   background: rgba(227, 227, 227, 0.4);
   font-weight: bold;
   cursor: not-allowed;
   border-radius: 0.5em;
+  padding-top: 0.7em;
 }
 .break {
   background: rgb(255, 205, 110);
@@ -111,14 +121,12 @@ export default {
   color: white;
   border-radius: 0.5em;
   cursor: not-allowed;
-}
-.booked.vuecal__event {
   padding-top: 0.7em;
 }
-.closed.vuecal__event {
-  padding-top: 0.7em;
+.muted {
+  cursor: not-allowed;
 }
-.user.vuecal__event {
+.user {
   background: rgb(0, 128, 134);
   color: white;
   border-radius: 0.5em;
@@ -127,22 +135,12 @@ export default {
 .vuecal__event {
   font-size: 0.9em;
 }
-.vuecal__cell--selected {
-  background: none;
-}
-.closed .vuecal__event-time,
-.booked .vuecal__event-time {
-  display: none;
-}
-.muted {
-  cursor: not-allowed;
-}
 .vuecal__cell:not(.muted) {
   cursor: pointer;
 }
-.muted .vuecal__event.closed,
-.muted .vuecal__event.booked,
-.muted .vuecal__event.break {
+.muted .closed,
+.muted .booked,
+.muted .break {
   opacity: 0.3;
   cursor: not-allowed;
 }
