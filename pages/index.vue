@@ -10,6 +10,8 @@
         :time-step="config.minutePerSlot"
         :events="events"
         :start-week-on="startDay"
+        :disable-dates="disabledDates"
+        disable-dates-class="muted"
         locale="hr"
         @cell-click="cellAction"
       />
@@ -26,6 +28,9 @@ export default {
   components: {
     VueCal
   },
+  data: () => ({
+    userClass: 'user'
+  }),
   computed: {
     events() {
       return this.$store.state.events
@@ -35,11 +40,13 @@ export default {
     },
     startDay() {
       return this.$store.state.startDay
+    },
+    disabledDates() {
+      return this.$store.getters.getDisabledDates(this.userClass)
     }
   },
   methods: {
     async cellAction(selectedDate) {
-      const userClass = 'user'
       const minuteDifference =
         selectedDate.getMinutes() % this.config.minutePerSlot
       const closestSlot = moment(selectedDate)
@@ -47,21 +54,27 @@ export default {
         .toDate()
       // search for existing events at the same time
       const concurringEvents = this.$store.getters.getEventsByDate(closestSlot)
+      const isDisabled = this.$store.getters
+        .getDisabledDates(this.userClass)
+        .filter(
+          (event) =>
+            event.getFullYear() === closestSlot.getFullYear() &&
+            event.getMonth() === closestSlot.getMonth() &&
+            event.getDate() === closestSlot.getDate()
+        ).length
       if (concurringEvents.length === 0) {
-        /* this.$refs.vuecal.createEvent(closestSlot, this.config.minutePerSlot, {
-          title: 'moj termin',
-          class: 'user'
-        }) */
-        const event = {
-          start: closestSlot,
-          end: moment(closestSlot)
-            .add(this.config.minutePerSlot, 'minutes')
-            .toDate(),
-          title: this.config.userSlotTitle,
-          class: userClass
+        if (!isDisabled) {
+          const event = {
+            start: closestSlot,
+            end: moment(closestSlot)
+              .add(this.config.minutePerSlot, 'minutes')
+              .toDate(),
+            title: this.config.userSlotTitle,
+            class: this.userClass
+          }
+          await this.$store.dispatch('ADD_EVENT', { event })
         }
-        await this.$store.dispatch('ADD_EVENT', { event })
-      } else if (concurringEvents[0].class === userClass) {
+      } else if (concurringEvents[0].class === this.userClass) {
         const event = concurringEvents[0]
         await this.$store.dispatch('REMOVE_EVENT', { event })
       }
@@ -79,21 +92,25 @@ export default {
   align-items: center;
   text-align: center;
 }
-.vuecal__cell-content {
-  cursor: pointer;
-}
 .vuecal__menu {
   display: none;
 }
 .closed {
-  background: rgba(189, 189, 187, 0.27);
+  background: rgba(227, 227, 227, 0.4);
+  font-weight: bold;
+  cursor: not-allowed;
+  border-radius: 0.5em;
 }
 .break {
-  background: rgb(255, 239, 0);
+  background: rgb(255, 205, 110);
+  border-radius: 0.5em;
+  cursor: not-allowed;
 }
 .booked {
-  background: rgb(255, 18, 118);
+  background: rgb(249, 143, 138);
   color: white;
+  border-radius: 0.5em;
+  cursor: not-allowed;
 }
 .booked.vuecal__event {
   padding-top: 0.7em;
@@ -102,8 +119,10 @@ export default {
   padding-top: 0.7em;
 }
 .user.vuecal__event {
-  background: rgb(81, 18, 255);
+  background: rgb(0, 128, 134);
   color: white;
+  border-radius: 0.5em;
+  cursor: pointer !important;
 }
 .vuecal__event {
   font-size: 0.9em;
@@ -114,5 +133,17 @@ export default {
 .closed .vuecal__event-time,
 .booked .vuecal__event-time {
   display: none;
+}
+.muted {
+  cursor: not-allowed;
+}
+.vuecal__cell:not(.muted) {
+  cursor: pointer;
+}
+.muted .vuecal__event.closed,
+.muted .vuecal__event.booked,
+.muted .vuecal__event.break {
+  opacity: 0.3;
+  cursor: not-allowed;
 }
 </style>

@@ -5,7 +5,11 @@ import days from '../days'
 const events = []
 const className = 'break'
 
-for (let i = 1; i < config.generatedDays + 1; i++) {
+for (
+  let i = 0 + config.startDayOffset;
+  i < config.generatedDays + config.startDayOffset;
+  i++
+) {
   const dayOfWeek = moment()
     .add(i, 'days')
     .day()

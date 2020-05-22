@@ -14,8 +14,8 @@ export const state = () => {
     ),
     config,
     startDay: moment()
-      .add(1, 'days')
-      .toDate() // tomorrow
+      .add(config.startDayOffset, 'days')
+      .toDate()
   }
   return s
 }
@@ -39,6 +39,54 @@ export const getters = {
         event.start.getDate() === date.getDate() &&
         event.class === eventClass
     )
+  },
+  getDisabledDates: (state) => (eventClass) => {
+    const dayRule = []
+    for (
+      let i = 0 + state.config.startDayOffset;
+      i < state.config.generatedDays + state.config.startDayOffset;
+      i++
+    ) {
+      const date = moment()
+        .add(i, 'days')
+        .toDate()
+      const eventsOnThisDay = state.events.filter(
+        (event) =>
+          event.start.getFullYear() === date.getFullYear() &&
+          event.start.getMonth() === date.getMonth() &&
+          event.start.getDate() === date.getDate() &&
+          event.class === eventClass
+      )
+      if (eventsOnThisDay.length >= state.config.maxUserSlotsPerDay) {
+        eventsOnThisDay.forEach((event) => dayRule.push(event.start))
+      }
+    }
+    const weekRule = []
+    for (let i = 0; i < Math.ceil(state.config.generatedDays / 7) + 1; i++) {
+      const date = moment(state.startDay)
+        .add(i, 'weeks')
+        .toDate()
+      const weekNumber = moment(date).isoWeek()
+      const year = date.getFullYear()
+      const eventsOnThisWeek = state.events.filter(
+        (event) =>
+          event.start.getFullYear() === year &&
+          moment(event.start).isoWeek() === weekNumber &&
+          event.class === eventClass
+      )
+      if (eventsOnThisWeek.length >= state.config.maxUserSlotsPerWeek) {
+        for (let i = 0; i < 7; i++) {
+          weekRule.push(
+            moment(year, 'YYYY')
+              .isoWeek(weekNumber)
+              .startOf('isoWeek')
+              .add(i, 'days')
+              .toDate()
+          )
+        }
+      }
+    }
+    return [].concat(dayRule, weekRule)
   }
 }
 
