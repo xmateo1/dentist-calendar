@@ -14,6 +14,7 @@
         disable-dates-class="muted"
         locale="hr"
         @cell-click="cellAction"
+        @event-focus="onEventFocus"
       />
     </client-only>
   </div>
@@ -29,7 +30,8 @@ export default {
     VueCal
   },
   data: () => ({
-    userClass: 'user'
+    userClass: 'user',
+    eventFocus: false
   }),
   computed: {
     events() {
@@ -47,6 +49,8 @@ export default {
   },
   methods: {
     async cellAction(selectedDate) {
+      if (this.eventFocus) return false
+      console.log(this.eventFocus)
       const isDate = selectedDate instanceof Date
       if (!isDate) return false
       const minuteDifference =
@@ -76,9 +80,15 @@ export default {
           }
           await this.$store.dispatch('ADD_EVENT', { event })
         }
-      } else if (concurringEvents[0].class === this.userClass) {
-        const event = concurringEvents[0]
+      }
+    },
+    async onEventFocus(event) {
+      if (event.class === this.userClass) {
+        this.eventFocus = true
         await this.$store.dispatch('REMOVE_EVENT', { event })
+        const sleep = (m) => new Promise((resolve) => setTimeout(resolve, m))
+        await sleep(300)
+        this.eventFocus = false
       }
     }
   }

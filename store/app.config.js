@@ -28,7 +28,7 @@ export default {
   bookedTitle: 'zauzeto',
   userSlotTitle: 'moj termin',
   generatedDays: 7,
-  generatedBookedSlots: 15,
+  generatedBookedSlots: 3,
   maxUserSlotsPerDay: 1,
   maxUserSlotsPerWeek: 2,
   startDayOffset: 1
