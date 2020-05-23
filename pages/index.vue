@@ -50,7 +50,6 @@ export default {
   methods: {
     async cellAction(selectedDate) {
       if (this.eventFocus) return false
-      console.log(this.eventFocus)
       const isDate = selectedDate instanceof Date
       if (!isDate) return false
       const minuteDifference =
